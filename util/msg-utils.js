@@ -10,14 +10,14 @@ msgUtils.sendTextMessage = function(receiver, msgText) {
     text : msgText
   };
   request({
-    url:    'https://graph.facebook.com/v2.6/me/messages',
-    qs:     {access_token : config.fbPageAccessToken},
-    method: 'POST',
-    json: {
-      recipient:  {id : receiver},
-      message:    msgData,
-    }
-  }, function(error, response, body) {
+            url:    'https://graph.facebook.com/v2.6/me/messages',
+            qs:     {access_token : config.fbPageAccessToken},
+            method: 'POST',
+            json: {
+                recipient:  {id : receiver},
+                message:    msgData,
+            }
+          }, function(error, response, body) {
     if (error) {
       console.error('Error sending message [' + msgText + '] to messenger: ', error);
     } else if (response.body.error) {
