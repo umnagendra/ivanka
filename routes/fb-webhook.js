@@ -1,9 +1,11 @@
-var express = require('express');
+var express     = require('express');
+var config      = require('../conf/config.json');
+var msgUtils    = require('../util/msg-utils');
 
 var router = express.Router();
 
 router.get('/', function (req, res) {
-  if (req.query['hub.verify_token'] === 'valar_morghulis') {
+  if (req.query['hub.verify_token'] === config.fbWebhookToken) {
     res.send(req.query['hub.challenge']);
   }
   res.send('Error, wrong validation token');
@@ -17,6 +19,8 @@ router.post('/', function (req, res) {
     if (event.message && event.message.text) {
       text = event.message.text;
       console.log("RECEIVED: " + text);
+      msgUtils.sendTextMessage(sender, 'Hello, this is Rosie, your friendly chat bot! Thanks for pinging! B|');
+      msgUtils.sendTextMessage(sender, 'I am still being built, so please come back in a day or two! :(')
       // TODO - For every message:
       // TODO - 1. Check if the sender is greeting you (hi, hello, hii, hey)
       // TODO - 2. If greeting, greet him back, and ask him how you can help him
