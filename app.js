@@ -13,10 +13,10 @@ app.get('/webhook', function (req, res) {
     res.send(req.query['hub.challenge']);
   }
   res.send('Error, wrong validation token');
-})
+});
 
 // Receives messages on the fb page
-app.post('/webhook/', function (req, res) {
+app.post('/webhook', function (req, res) {
   messaging_events = req.body.entry[0].messaging;
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i];
