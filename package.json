@@ -4,7 +4,6 @@
   "description": "A really simple chat bot using the Facebook Messenger platform.",
   "main": "app.js",
   "scripts": {
-    "test": "test",
     "start": "node app.js"
   },
   "repository": {
