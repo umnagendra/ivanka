@@ -26,7 +26,8 @@
   "dependencies": {
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
-    "express-ping": "^1.1.0"
+    "express-ping": "^1.1.0",
+    "morgan": "^1.7.0"
   },
   "engines": {
     "node": "6.0.0"
