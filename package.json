@@ -1,0 +1,31 @@
+{
+  "name": "rosie",
+  "version": "0.0.1",
+  "description": "A really simple chat bot using the Facebook Messenger platform.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umnagendra/rosie.git"
+  },
+  "keywords": [
+    "bot",
+    "chatbot",
+    "chat",
+    "fb",
+    "messenger"
+  ],
+  "author": "Nagendra U M <umnagendra@gmail.com>",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/umnagendra/rosie/issues"
+  },
+  "homepage": "https://github.com/umnagendra/rosie#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-ping": "^1.1.0"
+  }
+}
