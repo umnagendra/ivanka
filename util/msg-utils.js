@@ -3,8 +3,9 @@ var config      = require('../conf/config.json');
 
 var msgUtils = {};
 
-msgUtils.sendTextMessage = function(recipient, msgText) {
-  console.log('Sending message [' + msgText + '] to messenger...');
+msgUtils.sendTextMessage = function(receiver, msgText) {
+  console.log('Sending message [' + msgText + '] to ' + receiver + '...');
+  console.log('fb page access token is ' + config.fbPageAccessToken);
   msgData = {
     text : msgText
   };
@@ -13,7 +14,7 @@ msgUtils.sendTextMessage = function(recipient, msgText) {
     qs:     {access_token : config.fbPageAccessToken},
     method: 'POST',
     json: {
-      recipient:  {id : recipient},
+      recipient:  {id : receiver},
       message:    msgData,
     }
   }, function(error, response, body) {
