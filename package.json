@@ -2,7 +2,7 @@
   "name": "rosie",
   "version": "0.0.1",
   "description": "A really simple chat bot using the Facebook Messenger platform.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "test",
     "start": "node app.js"
@@ -27,5 +27,8 @@
   "dependencies": {
     "express": "^4.13.4",
     "express-ping": "^1.1.0"
+  },
+  "engines": {
+    "node": "6.0.0"
   }
 }
