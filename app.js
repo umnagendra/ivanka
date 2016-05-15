@@ -1,8 +1,12 @@
 var express     = require('express');
-var health      = require('express-ping')
+var health      = require('express-ping');
+var bodyParser  = require('body-parser');
 
 var app         = express();
 var port        = process.env.PORT || 7070;
+
+// parse application/json
+app.use(bodyParser.json());
 
 // ping API
 app.use(health.ping());

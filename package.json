@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/umnagendra/rosie#readme",
   "dependencies": {
+    "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "express-ping": "^1.1.0"
   },
