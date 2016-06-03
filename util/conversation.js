@@ -11,4 +11,6 @@ conversation.welcome = function(session) {
   transport.sendTextMessage(session.id, messages.MSG_GREETING);
   // transition state to WELCOMED
   session.state = session.STATES.WELCOMED;
-}
+};
+
+module.exports = conversation;
