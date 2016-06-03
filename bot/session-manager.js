@@ -19,9 +19,9 @@ SessionManager.createSession = function(id) {
     throw "{id} param is undefined";
   }
   console.log('Creating new session with ID [' + id + ']');
-  session = new session(id);
-  sessionMap.set(id, session);
-  return session;
+  thisSession = new session.session(id);
+  sessionMap.set(id, thisSession);
+  return thisSession;
 }
 
 SessionManager.removeSession = function(id) {
