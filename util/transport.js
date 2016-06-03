@@ -1,9 +1,9 @@
 var request     = require('request');
 var config      = require('../conf/config.json');
 
-var msgUtils = {};
+var transport = {};
 
-msgUtils.sendTextMessage = function(receiver, msgText) {
+transport.sendTextMessage = function(receiver, msgText) {
   console.log('Sending message [' + msgText + '] to ' + receiver + '...');
   msgData = {
     text : msgText
@@ -18,11 +18,14 @@ msgUtils.sendTextMessage = function(receiver, msgText) {
             }
           }, function(error, response, body) {
               if (error) {
-              console.error('Error sending message [' + msgText + '] to messenger: ', error);
-            } else if (response.body.error) {
-          console.log('Error sending message [' + msgText + '] to messenger: ', response.body.error);
-    }
-  });
+                console.error('Error sending message [' + msgText + '] to messenger: ', error);
+              } else if (response.body.error) {
+                console.error('Error sending message [' + msgText + '] to messenger: ', response.body.error);
+              } else {
+                // success
+                console.log('Successfully sent message [' + msgText + '] to messenger.');
+              }
+          });
 };
 
-module.exports = msgUtils;
+module.exports = transport;
