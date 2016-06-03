@@ -4,13 +4,13 @@ var session         = require('../bot/session');
 
 var conversation = {};
 
-conversation.welcome = function(session) {
-  if (!session || typeof session !== 'object') {
-    throw "{session} arg is undefined or not an object";
+conversation.welcome = function(thisSession) {
+  if (!thisSession || typeof thisSession !== 'object') {
+    throw "{thisSession} arg is undefined or not an object";
   }
-  transport.sendTextMessage(session.id, messages.MSG_GREETING);
+  transport.sendTextMessage(thisSession.id, messages.MSG_GREETING);
   // transition state to WELCOMED
-  session.state = session.STATES.WELCOMED;
+  thisSession.state = session.STATES.WELCOMED;
 };
 
 module.exports = conversation;
