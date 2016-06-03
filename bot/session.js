@@ -1,8 +1,8 @@
 const STATES = {
-                  STARTED   : 'STARTED',
-                  WELCOMED  : 'WELCOMED',
-                  INQUIRED  : 'INQUIRED',
-                  ENDED     : 'ENDED'
+                  "STARTED"   : "STARTED",
+                  "WELCOMED"  : "WELCOMED",
+                  "INQUIRED"  : "INQUIRED",
+                  "ENDED"     : "ENDED"
                };
 
 Session = function(id) {
