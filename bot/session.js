@@ -10,4 +10,7 @@ Session = function(id) {
   this.state = STATES.STARTED;
 }
 
-module.exports = Session;
+module.exports = {
+  session : Session,
+  STATES : STATES
+};
