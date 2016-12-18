@@ -8,7 +8,7 @@ logger.level = config.debug ? "debug" : "info";
 var transport = {};
 
 transport.sendTextMessage = function(receiver, msgText, success, error) {
-    if (!success || !error || typeof success !== "function" || typeof error !== function) {
+    if (!success || !error || typeof success !== "function" || typeof error !== "function") {
         throw "{success} and/or {error} args are either undefined or not valid functions";
     }
     logger.info('Outgoing message to %s: [%s]', receiver, msgText);
