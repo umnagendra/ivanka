@@ -10,7 +10,7 @@ logger.level = config.debug ? "debug" : "info";
 var router = express.Router();
 
 router.get('/', function (req, res) {
-    logger.debug('Received GET request: ' + util.inspect(req.query, false, null);
+    logger.debug('Received GET request: ' + util.inspect(req.query, false, null));
     if (req.query['hub.verify_token'] === config.fbWebhookToken) {
         res.send(req.query['hub.challenge']);
     } else {
