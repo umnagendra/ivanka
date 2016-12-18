@@ -22,7 +22,7 @@ SessionManager.createSession = function(id) {
     if (!id) {
         throw "{id} param is undefined";
     }
-    logger.info('Creating new session with ID [' + id + ']');
+    logger.info('Creating new session with ID [%s]', id);
     thisSession = new session.session(id);
     sessionMap.set(id, thisSession);
     return thisSession;
@@ -32,7 +32,7 @@ SessionManager.removeSession = function(id) {
     if (!id) {
         throw "{id} param is undefined";
     }
-    logger.info('Removing existing session with ID [' + id + ']');
+    logger.info('Removing existing session with ID [%s]', id);
     sessionMap.remove(id);
 }
 

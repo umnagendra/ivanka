@@ -21,9 +21,9 @@ transport.sendTextMessage = function(receiver, msgText) {
         }
     }, function(error, response, body) {
         if (error) {
-            logger.error('Error sending message [%s] to messenger: %s', msgText, JSON.stringify(error));
+            logger.error('Error sending message [%s] to messenger: %s', msgText, util.inspect(error));
         } else if (response.body.error) {
-            logger.error('Error sending message [%s] to messenger: %s', msgText, JSON.stringify(response.body.error));
+            logger.error('Error sending message [%s] to messenger: %s', msgText, util.inspect(response.body.error));
         } else {
             // success
             logger.debug('Successfully sent message [%s] to messenger.', msgText);
