@@ -1,4 +1,4 @@
-var request     = require('request');
+var request     = require('request-promise-native');
 var config      = require('../conf/config.json');
 var logger      = require('winston');
 var util        = require('util');
@@ -7,29 +7,22 @@ logger.level = config.debug ? "debug" : "info";
 
 var transport = {};
 
-transport.sendTextMessage = function(receiver, msgText) {
+transport.sendTextMessage = function(receiver, msgText, success, error) {
+    if (!success || !error || typeof success !== "function" || typeof error !== function) {
+        throw "{success} and/or {error} args are either undefined or not valid functions";
+    }
     logger.info('Outgoing message to %s: [%s]', receiver, msgText);
-    msgData = {
+    var msgData = {
         text : msgText
     };
-    request({
-        url:    'https://graph.facebook.com/v2.6/me/messages',
-        qs:     {access_token : config.fbPageAccessToken},
+    var options = {
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token : config.fbPageAccessToken},
         method: 'POST',
-        json: {
-            recipient:  {id : receiver},
-            message:    msgData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            logger.error('Error sending message [%s] to messenger: %s', msgText, util.inspect(error));
-        } else if (response.body.error) {
-            logger.error('Error sending message [%s] to messenger: %s', msgText, util.inspect(response.body.error));
-        } else {
-            // success
-            logger.debug('Successfully sent message [%s] to messenger.', msgText);
-        }
-    });
+        body: {recipient: {id : receiver}, message: msgData},
+        json: true
+    };
+    request(options).then(success).catch(error);
 };
 
 module.exports = transport;
