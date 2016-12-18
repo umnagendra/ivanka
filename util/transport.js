@@ -1,6 +1,7 @@
 var request     = require('request');
 var config      = require('../conf/config.json');
 var logger      = require('winston');
+var util        = require('util');
 
 logger.level = config.debug ? "debug" : "info";
 

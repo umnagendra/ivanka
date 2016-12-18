@@ -1,5 +1,6 @@
 var express         = require('express');
 var config          = require('../conf/config.json');
+var util            = require('util');
 var logger          = require('winston');
 var SessionManager  = require('../bot/session-manager');
 var conversation    = require('../util/conversation');
