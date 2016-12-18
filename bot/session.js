@@ -6,11 +6,11 @@ const STATES = {
                };
 
 Session = function(id) {
-  this.id = id;
-  this.state = STATES.STARTED;
+    this.id = id;
+    this.state = STATES.STARTED;
 }
 
 module.exports = {
-  session : Session,
-  STATES : STATES
+    session : Session,
+    STATES : STATES
 };

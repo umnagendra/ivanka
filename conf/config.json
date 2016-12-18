@@ -1,4 +1,5 @@
 {
+  "debug" : true,
   "serverPort" : 7070,
   "fbWebhookToken" : "valar_morghulis",
   "fbPageAccessToken" : "EAADZAgY7ZCnCoBAOdbFUPolDcYDvfA1G8haDVXcUiAZBQAqVuCWiAPg6GBgNI0D6GZBuSZCPhf3ed8DjFbrJvQ2ZApX5MWZAcj423PREstcpJdiMeCYpieoqP1SyCI0NIhQ42jOzx9TsZAgIS8brmMNxOuUDvwwek6XLIaKkuIJ3VAZDZD"
