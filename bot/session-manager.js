@@ -4,7 +4,7 @@ var session     = require('./session');
 var hashmap     = require('hashmap');
 var messages    = require('../conf/messages.json');
 
-logger.level = config.debug || "info";
+logger.level = config.debug ? "debug" : "info";
 
 // Map <sender ID, session>
 var sessionMap = new hashmap();

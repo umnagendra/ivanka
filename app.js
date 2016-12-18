@@ -9,7 +9,7 @@ var config      = require('./conf/config.json');
 var index       = require('./routes/index');
 var fbWebhook   = require('./routes/fb-webhook');
 
-logger.level    = config.debug || "info";
+logger.level    = config.debug ? "debug" : "info";
 var port        = process.env.PORT || config.serverPort;
 var app         = express();
 

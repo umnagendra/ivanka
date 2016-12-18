@@ -4,7 +4,7 @@ var logger          = require('winston');
 var SessionManager  = require('../bot/session-manager');
 var conversation    = require('../util/conversation');
 
-logger.level = config.debug || "info";
+logger.level = config.debug ? "debug" : "info";
 
 var router = express.Router();
 

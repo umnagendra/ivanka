@@ -2,7 +2,7 @@ var request     = require('request');
 var config      = require('../conf/config.json');
 var logger      = require('winston');
 
-logger.level = config.debug || "info";
+logger.level = config.debug ? "debug" : "info";
 
 var transport = {};
 
