@@ -22,5 +22,5 @@ app.use('/', index);
 app.use('/webhook', fbWebhook);
 
 app.listen(port, function() {
-    logger.info('Rosie listening on ' + port);
+    logger.info('Ivanka listening on ' + port);
 });

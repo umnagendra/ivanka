@@ -40,7 +40,7 @@ SessionManager.createSession = function(id) {
         throw "{id} param is undefined";
     }
 
-    // STEP 1: Create a new Rosie session. (STATE = STARTED)
+    // STEP 1: Create a new session. (STATE = STARTED)
     var thisSession = _createNewSession(id);
 
     // STEP 2: Get username from Facebook
