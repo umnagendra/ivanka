@@ -30,7 +30,7 @@ router.post('/', function (req, res) {
             logger.info('Incoming message: [%s]', text);
 
             // check if an existing session exists for this sender
-            if (SessionManager.getSession(sender) && SessionManager.getSession().state !== "STARTED") {
+            if (SessionManager.isSessionExist(sender) && SessionManager.getSession().state !== "STARTED") {
                 // TODO lookup existing session state, and handle accordingly
             } else {
                 // new sender, so create a session
