@@ -30,7 +30,7 @@ var SessionManager = {};
 
 SessionManager.getSession = function(id) {
     if (id) {
-        return this.sessionMap.get(id);
+        return sessionMap.get(id);
     }
     return null;
 };
