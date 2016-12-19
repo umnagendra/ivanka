@@ -18,6 +18,7 @@ Session = function(id) {
     this.user.reason = null;
     this.sparkcare.sessiontoken = null;
     this.state = STATES.STARTED;
+    this.questionsAsked = 0;
 }
 
 module.exports = {

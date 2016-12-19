@@ -12,10 +12,7 @@ logger.level = config.debug ? "debug" : "info";
 
 var facebookClient = {};
 
-facebookClient.sendTextMessage = function(receiver, msgText, success, error) {
-    if (!success || !error || typeof success !== "function" || typeof error !== "function") {
-        throw "{success} and/or {error} args are either undefined or not valid functions";
-    }
+facebookClient.sendTextMessage = function(receiver, msgText) {
     logger.info('Outgoing message to %s: [%s]', receiver, msgText);
     var msgData = {
         text : msgText
@@ -27,7 +24,7 @@ facebookClient.sendTextMessage = function(receiver, msgText, success, error) {
         body: {recipient: {id : receiver}, message: msgData},
         json: true
     };
-    request(options).then(success).catch(error);
+    return request(options);
 };
 
 facebookClient.getUserNameFromFBId = function(fbId, success, error) {

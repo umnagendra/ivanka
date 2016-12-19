@@ -64,7 +64,7 @@ SessionManager.createSession = function(id) {
             // TODO
         }).catch(function(error) {
            logger.error('Error getting session authorization from Spark Care:' + error);
-           _abortSession();
+           _abortSession(id);
         });
 
     return thisSession;
@@ -76,6 +76,14 @@ SessionManager.removeSession = function(id) {
     }
     logger.info('Removing existing session with ID [%s]', id);
     sessionMap.remove(id);
+};
+
+SessionManager.abortSession = function(id) {
+    if (!id) {
+            throw "{id} param is undefined";
+    }
+    logger.info('Aborting existing session with ID [%s]', id);
+    _abortSession(id);
 };
 
 SessionManager.isSessionExist = function(id) {

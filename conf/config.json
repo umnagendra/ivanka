@@ -4,5 +4,6 @@
   "fbWebhookToken" : "valar_morghulis",
   "fbPageAccessToken" : "EAADZAgY7ZCnCoBAOdbFUPolDcYDvfA1G8haDVXcUiAZBQAqVuCWiAPg6GBgNI0D6GZBuSZCPhf3ed8DjFbrJvQ2ZApX5MWZAcj423PREstcpJdiMeCYpieoqP1SyCI0NIhQ42jOzx9TsZAgIS8brmMNxOuUDvwwek6XLIaKkuIJ3VAZDZD",
   "sparkCareOrgId" : "b1de2d84-c9b1-485b-9698-b35e95c6107f",
-  "sparkCareClientOrigin" : "https://cumulus2.produs1.ciscoccservice.com"
+  "sparkCareClientOrigin" : "https://cumulus2.produs1.ciscoccservice.com",
+  "totalQuestions" : 2
 }
