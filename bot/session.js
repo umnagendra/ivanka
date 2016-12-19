@@ -1,6 +1,5 @@
-const STATES = {
+var STATES = {
     "STARTED"     : "STARTED",
-    "WELCOMED"    : "WELCOMED",
     "INFO"        : "INFO",
     "WAITING"     : "WAITING",
     "TALKING"     : "TALKING",
@@ -14,7 +13,9 @@ Session = function(id) {
     this.incomingMessages.buffer = [];
     this.incomingMessages.latestTimestamp = null;
     this.user.id = id;
-    this.user.name = "Facebook User" + "." + id;
+    this.user.name = 'Facebook User' + '.' + id;
+    this.user.email = null;
+    this.user.reason = null;
     this.sparkcare.sessiontoken = null;
     this.state = STATES.STARTED;
 }

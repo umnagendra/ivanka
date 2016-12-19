@@ -2,6 +2,7 @@ var express         = require('express');
 var config          = require('../conf/config.json');
 var util            = require('util');
 var logger          = require('winston');
+var session         = require('../bot/session');
 var SessionManager  = require('../bot/session-manager');
 var conversation    = require('../util/conversation');
 
@@ -30,14 +31,32 @@ router.post('/', function (req, res) {
             logger.info('Incoming message: [%s]', text);
 
             // check if an existing session exists for this sender
-            if (SessionManager.isSessionExist(sender) && SessionManager.getSession(sender).state !== "STARTED") {
-                // TODO lookup existing session state, and handle accordingly
+            if (SessionManager.isSessionExist(sender)
+                    && (SessionManager.getSession(sender).state !== session.STATES.STARTED
+                    || SessionManager.getSession(sender).state !== session.STATES.ENDED)) {
+                var thisSession = SessionManager.getSession(sender);
+                switch(thisSession.state) {
+                    case session.STATES.INFO:
+                        conversation.captureAnswer(thisSession, text);
+                        conversation.askQuestion(thisSession);
+                        break;
+
+                    case session.STATES.TALKING:
+                        // TODO drain any msgs in buffer
+                        // TODO push message to spark care
+                        break;
+
+                    default:    // this is the 'WAITING' state
+                        SessionManager.addMessageToBuffer(thisSession.user.id, text);
+                        break;
+                }
             } else {
                 // new sender, so create a session
                 var thisSession = SessionManager.createSession(sender);
                 conversation.welcome(thisSession);
                 SessionManager.addMessageToBuffer(thisSession.user.id, text);
-                // start asking him questions
+                thisSession.state = session.STATES.INFO;
+                conversation.askQuestion(thisSession);
             }
         }
     }

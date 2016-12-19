@@ -17,8 +17,6 @@ conversation.welcome = function(thisSession) {
         function(response) {
             // success
             logger.debug('Successfully sent message [%s] to messenger.', messages.MSG_GREETING);
-            // transition state to WELCOMED
-            thisSession.state = session.STATES.WELCOMED;
         },
         function(error) {
             logger.error('Error sending message [%s] to messenger: %s', messages.MSG_GREETING, util.inspect(error.error));
@@ -26,6 +24,20 @@ conversation.welcome = function(thisSession) {
             sessionManager.removeSession(thisSession.id);
         }
     );
+};
+
+conversation.askQuestion = function(thisSession) {
+    // TODO ask question
+    if(true) {
+        thisSession.state = session.STATES.WAITING;
+    }
+};
+
+conversation.captureAnswer = function(thisSession, messageText) {
+    // TODO update session attributes from answer
+    thisSession.user.name = 'Facebook User' + '.' + id;
+    thisSession.user.email = this.user.id + '@facebook.com';
+    thisSession.user.reason = 'Placeholder problem ' + (new Date).getTime();
 };
 
 module.exports = conversation;
