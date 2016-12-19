@@ -125,4 +125,17 @@ SessionManager.createChat = function(id) {
         });
 };
 
+SessionManager.sendChatMessage = function(id, messageText) {
+    if (!id) {
+        throw "{id} param is undefined";
+    }
+
+    var thisSession = sessionMap.get(id);
+    if (!thisSession) {
+            throw "invalid session [ID: " + id + "]";
+    }
+
+    sparkCareClient.encryptAndPushToContactCenter(thisSession, messageText);
+};
+
 module.exports = SessionManager;

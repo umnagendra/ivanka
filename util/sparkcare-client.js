@@ -51,11 +51,11 @@ var _processChatEvents = function(thisSession, msgArray) {
         switch(data.eventType) {
             case 'encryption.encrypt_key':
                 thisSession.sparkcare.encryptionKey = data.keyValue;
+                thisSession.sparkcare.keyURL = data.keyUrl;
                 break;
 
             case 'participant.info':
                 thisSession.state = session.STATES.TALKING;
-                _encryptAndPushToContactCenter(thisSession);
                 break;
 
             case 'conversation.activity':
@@ -64,6 +64,7 @@ var _processChatEvents = function(thisSession, msgArray) {
 
             case 'encryption.decrypt_key':
                 thisSession.sparkcare.decryptionKey = data.keyValue;
+                thisSession.sparkcare.keyURL = data.keyUrl;
                 break;
 
             default:
@@ -72,8 +73,25 @@ var _processChatEvents = function(thisSession, msgArray) {
     }
 };
 
-var _encryptAndPushToContactCenter = function(thisSession) {
-    logger.debug('Encrypting messages in buffer [%s] using encryption key [%s]', util.inspect(thisSession.incomingMessages.buffer), thisSession.sparkcare.encryptionKey);
+var _postChatMessage = function (thisSession, cipherText) {
+    logger.info('Posting a chat message from customer [%s] to Spark Care as part of org [%s] ...', thisSession.user.name, config.sparkCareOrgId);
+    var data = {
+        keyUrl: thisSession.sparkcare.keyURL,
+        messages: [cipherText]
+    };
+    var options = {
+        uri: thisSession.sparkcare.mediaURL,
+        method: 'POST',
+        headers: {
+            'Cisco-On-Behalf-Of' : config.sparkCareOrgId,
+            'Bubble-Origin' : config.sparkCareClientOrigin,
+            'Accept' : 'application/json',
+            'Bubble-Authorization' : thisSession.sparkcare.sessiontoken
+        },
+        body: data,
+        json: true
+    };
+    return request(options);
 };
 
 var _decryptAndPublishToCustomer = function(thisSession, cipherText) {
@@ -114,9 +132,9 @@ var _encrypt = function(key, plainText) {
 
     return new Promise(function(resolve, reject) {
         nodeJose.JWK.asKey(keyObj)
-            .then(function(kmsKey) {
+            .then(function(joseJWSKey) {
                 var encryptKey = {
-                    key: kmsKey,
+                    key: joseJWSKey,
                     header: {
                         alg: 'dir'
                     },
@@ -124,11 +142,11 @@ var _encrypt = function(key, plainText) {
                 };
                 return encryptKey;
             }).then(function(encryptKey) {
-                nodeJose.JWE.createEncrypt(options, encryptKey).final(plainText, 'utf8');
+                return nodeJose.JWE.createEncrypt(options, encryptKey).final(plainText, 'utf8');
             }).then(function(cipherText) {
-                resolve(cipherText);
+                return resolve(cipherText);
             }).catch(function(error) {
-                reject(error);
+                return reject(error);
             });
     });
 };
@@ -194,6 +212,30 @@ sparkCareClient.pollForChatEvents = function(thisSession) {
             logger.error('Error polling for chat events:' + error);
             sessionManager.abortSession(thisSession.user.id);
         });
+};
+
+sparkCareClient.encryptAndPushToContactCenter = function(thisSession, plainText) {
+    // first, encrypt and push all incoming messages held in the buffer
+    for (var i = 0; i < thisSession.incomingMessages.buffer.length; i++) {
+        var thisPlainText = thisSession.incomingMessages.buffer[i];
+        logger.debug('Encrypting buffered incoming message [%s] using encryption key [%s]', thisPlainText, thisSession.sparkcare.encryptionKey);
+        _encrypt(thisSession.sparkcare.encryptionKey, thisPlainText)
+            .then(function(cipherTextMsg) {
+                logger.debug('Encrypted ciphertext message is [%s]', cipherTextMsg);
+                _postChatMessage(thisSession, cipherTextMsg)
+                    .then(function(){});
+            });
+    }
+
+    // empty the buffer
+    thisSession.incomingMessages.buffer.length = 0;
+
+    _encrypt(thisSession.sparkcare.encryptionKey, plainText)
+        .then(function(cipherTextMsg) {
+            logger.debug('Encrypted ciphertext message is [%s]', cipherTextMsg);
+            _postChatMessage(thisSession, cipherTextMsg)
+                .then(function(){});
+         });
 };
 
 module.exports = sparkCareClient;

@@ -49,8 +49,7 @@ router.post('/', function (req, res) {
                         break;
 
                     case session.STATES.TALKING:
-                        // TODO drain any msgs in buffer
-                        // TODO push message to spark care
+                        SessionManager.sendChatMessage(thisSession.user.id, text);
                         break;
 
                     default:    // this is the 'WAITING' state
