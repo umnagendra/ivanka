@@ -34,8 +34,7 @@ router.post('/', function (req, res) {
                 // TODO lookup existing session state, and handle accordingly
             } else {
                 // new sender, so create a session
-                session = SessionManager.createSession(sender);
-                conversation.welcome(session);
+                SessionManager.createSession(sender);
             }
         }
     }

@@ -5,8 +5,10 @@ const STATES = {
                   "ENDED"     : "ENDED"
                };
 
-Session = function(id) {
-    this.id = id;
+Session = function(id, username) {
+    this.user = {};
+    this.user.id = id;
+    this.user.name = username ? username : "Facebook User";
     this.state = STATES.STARTED;
 }
 

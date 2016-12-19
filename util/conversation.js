@@ -1,4 +1,5 @@
 var messages        = require('../conf/messages.json');
+var util            = require('util');
 var transport       = require('../util/transport');
 var session         = require('../bot/session');
 var sessionManager  = require('../bot/session-manager');
@@ -12,7 +13,7 @@ conversation.welcome = function(thisSession) {
     if (!thisSession || typeof thisSession !== 'object') {
         throw "{thisSession} arg is undefined or not an object";
     }
-    transport.sendTextMessage(thisSession.id, messages.MSG_GREETING,
+    transport.sendTextMessage(thisSession.user.id, messages.MSG_GREETING,
         function(response) {
             // success
             logger.debug('Successfully sent message [%s] to messenger.', messages.MSG_GREETING);
@@ -20,7 +21,7 @@ conversation.welcome = function(thisSession) {
             thisSession.state = session.STATES.WELCOMED;
         },
         function(error) {
-            logger.error('Error sending message [%s] to messenger: %s', messages.MSG_GREETING, util.inspect(error));
+            logger.error('Error sending message [%s] to messenger: %s', messages.MSG_GREETING, util.inspect(error.error));
             // clean-up session
             sessionManager.removeSession(thisSession.id);
         }
