@@ -9,9 +9,13 @@ var logger          = require('winston');
 logger.level = config.debug ? "debug" : "info";
 var conversation = {};
 
-conversation.sendTextMessage = function(thisSession, messageText) {
+conversation.sendTextMessage = function(thisSession, messageText, deferred = false) {
     if (!thisSession || typeof thisSession !== 'object') {
             throw "{thisSession} arg is undefined or not an object";
+    }
+
+    if (deferred) {
+        return fbClient.sendTextMessage(thisSession.user.id, messageText);
     }
 
     fbClient.sendTextMessage(thisSession.user.id, messageText)
@@ -31,7 +35,7 @@ conversation.welcome = function(thisSession) {
 
 conversation.askQuestion = function(thisSession) {
     if (thisSession.questionsAsked === 0) {
-        fbClient.sendTextMessage(thisSession.user.id, messages.MSG_ASK_EMAIL)
+        conversation.sendTextMessage(thisSession, messages.MSG_ASK_EMAIL, true)
             .then(function(response) {
                 thisSession.questionsAsked++;
             }).catch(function(error) {
@@ -40,7 +44,7 @@ conversation.askQuestion = function(thisSession) {
             });
     } else if (thisSession.questionsAsked === 1) {
         var question = messages.MSG_ASK_REASON_1 + thisSession.user.name + messages.MSG_ASK_REASON_2;
-        fbClient.sendTextMessage(thisSession.user.id, question)
+        conversation.sendTextMessage(thisSession, question, true)
             .then(function(response) {
                 thisSession.questionsAsked++;
             })
