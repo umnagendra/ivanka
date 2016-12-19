@@ -43,10 +43,6 @@ conversation.askQuestion = function(thisSession) {
                 sessionManager.abortSession(thisSession.id);
             });
     }
-    // TODO ask question
-    if(thisSession.questionsAsked === config.totalQuestions) {
-        thisSession.state = session.STATES.WAITING;
-    }
 };
 
 conversation.captureAnswer = function(thisSession, messageText) {

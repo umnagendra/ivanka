@@ -80,7 +80,7 @@ SessionManager.removeSession = function(id) {
 
 SessionManager.abortSession = function(id) {
     if (!id) {
-            throw "{id} param is undefined";
+        throw "{id} param is undefined";
     }
     logger.info('Aborting existing session with ID [%s]', id);
     _abortSession(id);
@@ -100,5 +100,27 @@ SessionManager.addMessageToBuffer = function(sessionId, messageText) {
     thisSession.incomingMessages.buffer.push(messageText);
     thisSession.incomingMessages.latestTimestamp = (new Date).getTime();
 };
+
+SessionManager.createChat = function(id) {
+    if (!id) {
+        throw "{id} param is undefined";
+    }
+
+    var thisSession = sessionMap.get(id);
+    if (!thisSession) {
+            throw "invalid session [ID: " + id + "]";
+    }
+
+    sparkCareClient.createChat(thisSession)
+        .then(function(response) {
+            logger.info('Chat created successfully. MediaURL = ' + response.mediaUrl);
+            thisSession.sparkcare.mediaURL = response.mediaUrl;
+            // TODO start poller
+        })
+        .catch(function(error) {
+            logger.error('Error creating chat:' + error);
+            _abortSession(id);
+        });
+}
 
 module.exports = SessionManager;

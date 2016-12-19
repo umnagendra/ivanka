@@ -39,6 +39,10 @@ router.post('/', function (req, res) {
                     case session.STATES.INFO:
                         conversation.captureAnswer(thisSession, text);
                         conversation.askQuestion(thisSession);
+                        if(thisSession.questionsAsked === config.totalQuestions) {
+                            thisSession.state = session.STATES.WAITING;
+                            SessionManager.createChat(thisSession.user.id);
+                        }
                         break;
 
                     case session.STATES.TALKING:

@@ -17,6 +17,8 @@ Session = function(id) {
     this.user.email = null;
     this.user.reason = null;
     this.sparkcare.sessiontoken = null;
+    this.sparkcare.mediaURL = null;
+    this.sparkcare.encryptionKey = null;
     this.state = STATES.STARTED;
     this.questionsAsked = 0;
 }
