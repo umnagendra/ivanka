@@ -1,5 +1,6 @@
 var express         = require('express');
 var config          = require('../conf/config.json');
+var messages        = require('../conf/messages.json');
 var util            = require('util');
 var logger          = require('winston');
 var session         = require('../bot/session');
@@ -41,6 +42,8 @@ router.post('/', function (req, res) {
                         conversation.askQuestion(thisSession);
                         if(thisSession.questionsAsked === config.totalQuestions) {
                             thisSession.state = session.STATES.WAITING;
+                            conversation.sendTextMessage(thisSession, messages.MSG_WAIT);
+                            // TODO check for agent availability. If no, sleep a bit and do callback
                             SessionManager.createChat(thisSession.user.id);
                         }
                         break;

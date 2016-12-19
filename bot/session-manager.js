@@ -83,6 +83,9 @@ SessionManager.abortSession = function(id) {
         throw "{id} param is undefined";
     }
     logger.info('Aborting existing session with ID [%s]', id);
+    var thisSession = sessionMap.get(sessionId);
+    // cancel the interval
+    cancelInterval(thisSession.sparkcare.poller);
     _abortSession(id);
 };
 
@@ -115,7 +118,7 @@ SessionManager.createChat = function(id) {
         .then(function(response) {
             logger.info('Chat created successfully. MediaURL = ' + response.mediaUrl);
             thisSession.sparkcare.mediaURL = response.mediaUrl;
-            // TODO start poller
+            thisSession.sparkcare.poller = setInterval(sparkCareClient.pollForChatEvents, config.customerPollingIntervalMS, thisSession);
         })
         .catch(function(error) {
             logger.error('Error creating chat:' + error);

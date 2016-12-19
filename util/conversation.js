@@ -9,18 +9,24 @@ var logger          = require('winston');
 logger.level = config.debug ? "debug" : "info";
 var conversation = {};
 
-conversation.welcome = function(thisSession) {
+conversation.sendTextMessage = function(thisSession, messageText) {
     if (!thisSession || typeof thisSession !== 'object') {
-        throw "{thisSession} arg is undefined or not an object";
+            throw "{thisSession} arg is undefined or not an object";
     }
-    fbClient.sendTextMessage(thisSession.user.id, messages.MSG_GREETING)
+
+    fbClient.sendTextMessage(thisSession.user.id, messageText)
         .then(function(response) {
             // success
-            logger.debug('Successfully sent message [%s] to messenger.', messages.MSG_GREETING);
-        }).catch(function(error) {
-            logger.error('Error sending message [%s] to messenger: %s', messages.MSG_GREETING, util.inspect(error.error));
-            sessionManager.abortSession(thisSession.id);
+            logger.debug('Successfully sent message [%s] to messenger.', messageText);
+        })
+        .catch(function(error) {
+            logger.error('Error sending message [%s] to messenger: %s', messageText, util.inspect(error.error));
+            sessionManager.abortSession(thisSession.user.id);
         });
+};
+
+conversation.welcome = function(thisSession) {
+    conversation.sendTextMessage(thisSession, messages.MSG_GREETING);
 };
 
 conversation.askQuestion = function(thisSession) {
@@ -40,7 +46,7 @@ conversation.askQuestion = function(thisSession) {
             })
             .catch(function(error) {
                 logger.error('Error sending message [%s] to messenger: %s', question, util.inspect(error.error));
-                sessionManager.abortSession(thisSession.id);
+                sessionManager.abortSession(thisSession.user.id);
             });
     }
 };

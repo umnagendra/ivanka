@@ -19,6 +19,7 @@ Session = function(id) {
     this.sparkcare.sessiontoken = null;
     this.sparkcare.mediaURL = null;
     this.sparkcare.encryptionKey = null;
+    this.sparkcare.decryptionKey = null;
     this.state = STATES.STARTED;
     this.questionsAsked = 0;
 }
