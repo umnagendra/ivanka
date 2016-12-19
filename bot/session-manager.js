@@ -93,7 +93,7 @@ SessionManager.isSessionExist = function(id) {
     return sessionMap.has(id);
 };
 
-SessionManager.addMessageToBuffer = function(sessionId, messageText) {
+SessionManager.addIncomingMessageToBuffer = function(sessionId, messageText) {
     var thisSession = sessionMap.get(sessionId);
 
     if (!thisSession) {
@@ -101,7 +101,6 @@ SessionManager.addMessageToBuffer = function(sessionId, messageText) {
     }
 
     thisSession.incomingMessages.buffer.push(messageText);
-    thisSession.incomingMessages.latestTimestamp = (new Date).getTime();
 };
 
 SessionManager.createChat = function(id) {
@@ -124,6 +123,6 @@ SessionManager.createChat = function(id) {
             logger.error('Error creating chat:' + error);
             _abortSession(id);
         });
-}
+};
 
 module.exports = SessionManager;

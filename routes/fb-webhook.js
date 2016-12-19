@@ -54,14 +54,14 @@ router.post('/', function (req, res) {
                         break;
 
                     default:    // this is the 'WAITING' state
-                        SessionManager.addMessageToBuffer(thisSession.user.id, text);
+                        SessionManager.addIncomingMessageToBuffer(thisSession.user.id, text);
                         break;
                 }
             } else {
                 // new sender, so create a session
                 var thisSession = SessionManager.createSession(sender);
                 conversation.welcome(thisSession);
-                SessionManager.addMessageToBuffer(thisSession.user.id, text);
+                SessionManager.addIncomingMessageToBuffer(thisSession.user.id, text);
                 thisSession.state = session.STATES.INFO;
                 conversation.askQuestion(thisSession);
             }

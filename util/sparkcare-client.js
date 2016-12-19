@@ -1,8 +1,10 @@
-var request     = require('request-promise-native');
-var util        = require('util');
-var session     = require('../bot/session');
-var config      = require('../conf/config.json');
-var logger      = require('winston');
+var request         = require('request-promise-native');
+var util            = require('util');
+var session         = require('../bot/session');
+var config          = require('../conf/config.json');
+var logger          = require('winston');
+var nodeJose        = require('node-jose');
+var conversation    = require('../util/conversation');
 
 // constants
 var SPARK_CARE_API_VERSION        = "v1";
@@ -72,12 +74,78 @@ var _processChatEvents = function(thisSession, msgArray) {
 
 var _encryptAndPushToContactCenter = function(thisSession) {
     logger.debug('Encrypting messages in buffer [%s] using encryption key [%s]', util.inspect(thisSession.incomingMessages.buffer), thisSession.sparkcare.encryptionKey);
-    // TODO
 };
 
 var _decryptAndPublishToCustomer = function(thisSession, cipherText) {
+    if (!thisSession.sparkcare.decryptionKey) {
+        thisSession.outgoingMessages.buffer.push(cipherText);
+        return;
+    }
+    for (var i = 0; i < thisSession.outgoingMessages.buffer.length; i++) {
+        var thisCipherText = thisSession.outgoingMessages.buffer[i];
+        logger.debug('Decrypting buffered outgoing message [%s] using decryption key [%s]', thisCipherText, thisSession.sparkcare.decryptionKey);
+        _decrypt(thisSession.sparkcare.decryptionKey, thisCipherText)
+                .then(function(plainTextMsg) {
+                    logger.debug('Decrypted plaintext message is [%s]', plainTextMsg);
+                    conversation.sendTextMessage(thisSession, plainTextMsg);
+                });
+    }
+    // empty the buffer
+    thisSession.outgoingMessages.buffer.length = 0;
+
     logger.debug('Decrypting message [%s] using decryption key [%s]', cipherText, thisSession.sparkcare.decryptionKey);
-    // TODO
+    _decrypt(thisSession.sparkcare.decryptionKey, cipherText)
+        .then(function(plainTextMsg) {
+            logger.debug('Decrypted plaintext message is [%s]', plainTextMsg);
+            conversation.sendTextMessage(thisSession, plainTextMsg);
+        });
+};
+
+var _encrypt = function(key, plainText) {
+    var options = {
+        compact: true,
+        contentAlg: 'A256GCM',
+        protect: '*'
+    };
+    var keyObj = {
+        kty: 'oct',
+        k: key
+    };
+
+    return new Promise(function(resolve, reject) {
+        nodeJose.JWK.asKey(keyObj)
+            .then(function(kmsKey) {
+                var encryptKey = {
+                    key: kmsKey,
+                    header: {
+                        alg: 'dir'
+                    },
+                    reference: null
+                };
+                return encryptKey;
+            }).then(function(encryptKey) {
+                nodeJose.JWE.createEncrypt(options, encryptKey).final(plainText, 'utf8');
+            }).then(function(cipherText) {
+                resolve(cipherText);
+            }).catch(function(error) {
+                reject(error);
+            });
+    });
+};
+
+var _decrypt = function(key, cipherText) {
+    var keyObj = {
+        kty: 'oct',
+        k: key,
+        alg: 'dir'
+    };
+
+    return nodeJose.JWK.asKey(keyObj)
+        .then(function(joseJWSKey) {
+            return nodeJose.JWE.createDecrypt(joseJWSKey).decrypt(cipherText);
+        }).then(function(result) {
+            return result.plaintext.toString();
+        });
 };
 
 var sparkCareClient = {};
