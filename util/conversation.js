@@ -1,6 +1,6 @@
 var messages        = require('../conf/messages.json');
 var util            = require('util');
-var transport       = require('../util/transport');
+var fbClient        = require('../util/facebook-client');
 var session         = require('../bot/session');
 var sessionManager  = require('../bot/session-manager');
 var config          = require('../conf/config.json');
@@ -13,7 +13,7 @@ conversation.welcome = function(thisSession) {
     if (!thisSession || typeof thisSession !== 'object') {
         throw "{thisSession} arg is undefined or not an object";
     }
-    transport.sendTextMessage(thisSession.user.id, messages.MSG_GREETING,
+    fbClient.sendTextMessage(thisSession.user.id, messages.MSG_GREETING,
         function(response) {
             // success
             logger.debug('Successfully sent message [%s] to messenger.', messages.MSG_GREETING);

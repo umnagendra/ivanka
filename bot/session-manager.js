@@ -4,7 +4,8 @@ var logger          = require('winston');
 var session         = require('./session');
 var hashmap         = require('hashmap');
 var messages        = require('../conf/messages.json');
-var transport       = require('../util/transport.js');
+var fbClient        = require('../util/facebook-client');
+var sparkCareClient = require('../util/sparkcare-client');
 var conversation    = require('../util/conversation');
 
 logger.level = config.debug ? "debug" : "info";
@@ -12,12 +13,18 @@ logger.level = config.debug ? "debug" : "info";
 // Map <sender ID, session>
 var sessionMap = new hashmap();
 
-var _createNewSession = function(id, username) {
-    logger.info('Creating new session with ID [%s] for user [%s]', id, username);
-    thisSession = new session.session(id, username);
+var _createNewSession = function(id) {
+    logger.info('Creating new session with ID [%s]', id);
+    thisSession = new session.session(id);
     sessionMap.set(id, thisSession);
     return thisSession;
 };
+
+var _abortSession = function(id) {
+    logger.info('Aborting session with ID [%s]', id);
+    // TODO inform customer about aborting session due to internal error
+    sessionMap.remove(id);
+}
 
 var SessionManager = {};
 
@@ -32,21 +39,36 @@ SessionManager.createSession = function(id) {
     if (!id) {
         throw "{id} param is undefined";
     }
-    transport.getUserNameFromFBId(id,
+
+    // STEP 1: Create a new Rosie session. (STATE = STARTED)
+    var thisSession = _createNewSession(id);
+
+    // STEP 2: Get username from Facebook
+    fbClient.getUserNameFromFBId(id,
         function(response) {
-            var username = response.first_name + ' ' + response.last_name;
-            var thisSession = _createNewSession(id, username);
-            conversation.welcome(thisSession);
+            thisSession.user.name = response.first_name;
+            logger.debug('Got first name [%s] for id [%s]', thisSession.user.name, id);
         },
         function(error) {
             logger.error('Error retrieving user name from ID [%s]: %s', id, util.inspect(error));
-            // create a session anyway, with a default username
-            var thisSession = _createNewSession(id, null);
-            conversation.welcome(thisSession);
-            // TODO more
         }
     );
-}
+
+    // STEP 3: Get session authorization from Spark Care
+    sparkCareClient.getSessionAuthorization()
+        .then(function(response) {
+            logger.debug('Got response. Value of `Set-Bubble-Authorization` is ' + response.headers['set-bubble-authorization']);
+            thisSession.sparkcare.sessiontoken = response.headers['set-bubble-authorization'];
+
+            // STEP 5: Trigger chat or callback
+            // TODO
+        }).catch(function(error) {
+           logger.error('Error getting session authorization from Spark Care:' + error);
+           _abortSession();
+        });
+
+    return thisSession;
+};
 
 SessionManager.removeSession = function(id) {
     if (!id) {
@@ -54,10 +76,21 @@ SessionManager.removeSession = function(id) {
     }
     logger.info('Removing existing session with ID [%s]', id);
     sessionMap.remove(id);
-}
+};
 
 SessionManager.isSessionExist = function(id) {
     return sessionMap.has(id);
-}
+};
+
+SessionManager.addMessageToBuffer = function(sessionId, messageText) {
+    var thisSession = sessionMap.get(sessionId);
+
+    if (!thisSession) {
+        throw "invalid session [ID: " + sessionId + "]";
+    }
+
+    thisSession.incomingMessages.buffer.push(messageText);
+    thisSession.incomingMessages.latestTimestamp = (new Date).getTime();
+};
 
 module.exports = SessionManager;

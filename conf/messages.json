@@ -1,3 +1,8 @@
 {
-  "MSG_GREETING" : "Hello, this is Rosie, your friendly chat bot! How may I help you today?" 
+  "MSG_GREETING"      : "Hi! I am Ivanka. I am here to assist you with any questions you might have.",
+  "MSG_ASK_EMAIL"     : "Can I please have your email address?",
+  "MSG_ASK_REASON_1"  : "So, ",
+  "MSG_ASK_REASON_2"  : ", what is your concern?",
+  "MSG_WAIT"          : "Ooh, seems like a real pickle! I'll quickly run and find an expert who can help you. ",
+  "MSG_NO_AGENTS"     : "I'm so sorry, all our experts are busy right now."
 }

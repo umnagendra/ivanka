@@ -30,11 +30,15 @@ router.post('/', function (req, res) {
             logger.info('Incoming message: [%s]', text);
 
             // check if an existing session exists for this sender
-            if (SessionManager.isSessionExist(sender)) {
+            if (SessionManager.getSession() && SessionManager.getSession().state !== "STARTED") {
                 // TODO lookup existing session state, and handle accordingly
             } else {
                 // new sender, so create a session
-                SessionManager.createSession(sender);
+                var thisSession = SessionManager.createSession(sender);
+                conversation.welcome(thisSession);
+                SessionManager.addMessageToBuffer(thisSession.user.id, text);
+                logger.debug(util.inspect(thisSession));
+                // start asking him questions
             }
         }
     }
