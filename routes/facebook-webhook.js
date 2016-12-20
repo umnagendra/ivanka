@@ -9,22 +9,39 @@ var conversation    = require('../util/conversation');
 
 logger.level = config.system.debug ? "debug" : "info";
 
+var _handleIncomingMessageInINFOState = function(thisSession, message) {
+    conversation.captureAnswer(thisSession, message);
+    conversation.askQuestion(thisSession);
+    if(thisSession.questionsAsked === config.totalQuestions) {
+        thisSession.state = session.STATES.WAITING;
+        conversation.sendTextMessage(thisSession, messages.MSG_WAIT);
+        // TODO check for agent availability. If no, sleep a bit and do callback
+        if (!SessionManager.isLiveSupportAvailable()) {
+            SessionManager.createChat(thisSession.user.id);
+        } else {
+            conversation.sendTextMessage(thisSession, messages.MSG_NO_AGENTS);
+            conversation.sendTextMessage(thisSession, messages.MSG_ASK_PHONE);
+            thisSession.state = session.STATES.CALLBACK;
+        }
+    }
+};
+
 var _handleIncomingMessage = function(sender, message) {
     var thisSession = SessionManager.getSession(sender);
     switch(thisSession.state) {
         case session.STATES.INFO:
-            conversation.captureAnswer(thisSession, message);
-            conversation.askQuestion(thisSession);
-            if(thisSession.questionsAsked === config.totalQuestions) {
-                thisSession.state = session.STATES.WAITING;
-                conversation.sendTextMessage(thisSession, messages.MSG_WAIT);
-                // TODO check for agent availability. If no, sleep a bit and do callback
-                SessionManager.createChat(thisSession.user.id);
-            }
+            _handleIncomingMessageInINFOState(thisSession, message);
             break;
 
         case session.STATES.TALKING:
             SessionManager.sendChatMessage(thisSession.user.id, message);
+            break;
+
+        case session.STATES.CALLBACK:
+            thisSession.user.phone = message;
+            SessionManager.createCallback(thisSession.user.id);
+            thisSession.state = session.STATES.WAITING;
+            conversation.sendTextMessage(thisSession, messages.MSG_CALLBACK_ACK);
             break;
 
         default:

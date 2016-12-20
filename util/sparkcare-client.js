@@ -1,4 +1,5 @@
 var request         = require('request-promise-native');
+var syncRequest     = require('sync-request');
 var util            = require('util');
 var session         = require('../bot/session');
 var config          = require('../conf/config.json');
@@ -234,6 +235,31 @@ sparkCareClient.encryptAndPushToContactCenter = function(thisSession, plainText)
             _postChatMessage(thisSession, cipherTextMsg)
                 .then(function(){});
          });
+};
+
+sparkCareClient.getAgentStats = function() {
+    logger.debug('GETting agent stats from spark care ...');
+    var response = syncRequest('GET', SPARK_CARE_CONTROL_API_URL + '/agentstats/' + config.contact_center.spark_care.orgId);
+    var agentStats = JSON.parse(response.getBody('utf8'));
+    return agentStats;
+};
+
+sparkCareClient.createCallback = function(thisSession) {
+    logger.info('Creating a callback from customer [%s] to Spark Care as part of org [%s] ...', thisSession.user.name, config.contact_center.spark_care.orgId);
+    var data = {
+        customerIdentity: {
+            Context_Mobile_Phone: thisSession.user.phone
+        },
+        orgId: config.contact_center.spark_care.orgId
+    };
+    var options = {
+        uri: SPARK_CARE_CONTROL_API_URL + '/callback',
+        method: 'POST',
+        headers: _getSparkCareRequestHeaders(thisSession),
+        body: data,
+        json: true
+    };
+    return request(options);
 };
 
 module.exports = sparkCareClient;

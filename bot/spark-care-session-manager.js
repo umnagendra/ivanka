@@ -37,4 +37,18 @@ SparkCareSessionManager.endChatSession = function(thisSession) {
     // TODO
 }
 
+SparkCareSessionManager.isLiveSupportAvailable = function() {
+    var agentStats = sparkCareClient.getAgentStats();
+    return agentStats.agentsLoggedIn ? true : false;
+};
+
+SparkCareSessionManager.createCallback = function(thisSession) {
+    sparkCareClient.createCallback(thisSession)
+        .then(function(response) {
+            logger.info('Callback created successfully. MediaURL = ' + response.mediaUrl);
+        }).catch(function(error) {
+            logger.error('Error creating callback:' + error);
+        });
+};
+
 module.exports = SparkCareSessionManager;

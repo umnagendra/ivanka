@@ -139,4 +139,21 @@ SessionManager.sendChatMessage = function(id, messageText) {
     contactCenterClient.sendChatMessage(thisSession, messageText);
 };
 
+SessionManager.isLiveSupportAvailable = function() {
+    return contactCenterClient.isLiveSupportAvailable();
+};
+
+SessionManager.createCallback = function(id) {
+    if (!id) {
+        throw "{id} param is undefined";
+    }
+
+    var thisSession = sessionMap.get(id);
+    if (!thisSession) {
+            throw "invalid session [ID: " + id + "]";
+    }
+
+    contactCenterClient.createCallback(thisSession);
+};
+
 module.exports = SessionManager;

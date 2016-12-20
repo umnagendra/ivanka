@@ -2,6 +2,7 @@ var STATES = {
     "STARTED"     : "STARTED",
     "INFO"        : "INFO",
     "WAITING"     : "WAITING",
+    "CALLBACK"    : "CALLBACK",
     "TALKING"     : "TALKING",
     "ENDED"       : "ENDED"
 };
@@ -11,6 +12,7 @@ Session = function(id) {
         id          : id,
         name        : 'Facebook User(' + id + ')',
         email       : null,
+        phone       : null,
         reason      : null
     };
 
