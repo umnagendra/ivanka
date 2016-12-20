@@ -8,7 +8,7 @@ var fbClient        = require('../util/facebook-client');
 var sparkCareClient = require('../util/sparkcare-client');
 var conversation    = require('../util/conversation');
 
-logger.level = config.debug ? "debug" : "info";
+logger.level = config.system.debug ? "debug" : "info";
 
 // Map <sender ID, session>
 var sessionMap = new hashmap();
@@ -70,12 +70,13 @@ SessionManager.createSession = function(id) {
     return thisSession;
 };
 
-SessionManager.removeSession = function(id) {
+SessionManager.endSession = function(id) {
     if (!id) {
         throw "{id} param is undefined";
     }
     logger.info('Removing existing session with ID [%s]', id);
     sessionMap.remove(id);
+    // TODO handle contact center changes
 };
 
 SessionManager.abortSession = function(id) {
@@ -117,7 +118,7 @@ SessionManager.createChat = function(id) {
         .then(function(response) {
             logger.info('Chat created successfully. MediaURL = ' + response.mediaUrl);
             thisSession.sparkcare.mediaURL = response.mediaUrl;
-            thisSession.sparkcare.poller = setInterval(sparkCareClient.pollForChatEvents, config.customerPollingIntervalMS, thisSession);
+            thisSession.sparkcare.poller = setInterval(sparkCareClient.pollForChatEvents, config.contact_center.spark_care.eventPollingIntervalMS, thisSession);
         })
         .catch(function(error) {
             logger.error('Error creating chat:' + error);

@@ -7,23 +7,36 @@ var STATES = {
 };
 
 Session = function(id) {
-    this.user = {};
-    this.sparkcare = {};
-    this.incomingMessages = {};
-    this.outgoingMessages = {};
-    this.incomingMessages.buffer = [];
-    this.outgoingMessages.buffer = [];
-    this.user.id = id;
-    this.user.name = 'Facebook User' + '.' + id;
-    this.user.email = null;
-    this.user.reason = null;
-    this.sparkcare.sessiontoken = null;
-    this.sparkcare.mediaURL = null;
-    this.sparkcare.keyURL = null;
-    this.sparkcare.encryptionKey = null;
-    this.sparkcare.decryptionKey = null;
+    this.user = {
+        id          : id,
+        name        : 'Facebook User(' + id + ')',
+        email       : null,
+        reason      : null
+    };
+
+    this.incomingMessages = {
+        buffer: []
+    };
+
+    this.outgoingMessages = {
+        buffer: []
+    };
+
     this.state = STATES.STARTED;
+
     this.questionsAsked = 0;
+
+    this.sparkcare = {
+        sessiontoken        : null,
+        mediaURL            : null,
+        keyURL              : null,
+        encryptionKey       : null,
+        decryptionKey       : null
+    };
+
+    this.socialminer = {
+        // TODO
+    };
 }
 
 module.exports = {

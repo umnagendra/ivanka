@@ -1,10 +1,24 @@
 {
-  "debug" : true,
-  "serverPort" : 7070,
-  "fbWebhookToken" : "valar_morghulis",
-  "fbPageAccessToken" : "EAADZAgY7ZCnCoBAOdbFUPolDcYDvfA1G8haDVXcUiAZBQAqVuCWiAPg6GBgNI0D6GZBuSZCPhf3ed8DjFbrJvQ2ZApX5MWZAcj423PREstcpJdiMeCYpieoqP1SyCI0NIhQ42jOzx9TsZAgIS8brmMNxOuUDvwwek6XLIaKkuIJ3VAZDZD",
-  "sparkCareOrgId" : "b1de2d84-c9b1-485b-9698-b35e95c6107f",
-  "sparkCareClientOrigin" : "https://cumulus2.produs1.ciscoccservice.com",
-  "totalQuestions" : 2,
-  "customerPollingIntervalMS" : 3000
+    "system": {
+        "debug"           : true,
+        "serverPort"      : 7070,
+        "contact_center"  : "spark_care"
+    },
+    "facebook": {
+            "webhookToken"    : "valar_morghulis",
+            "pageAccessToken" : "EAADZAgY7ZCnCoBAOdbFUPolDcYDvfA1G8haDVXcUiAZBQAqVuCWiAPg6GBgNI0D6GZBuSZCPhf3ed8DjFbrJvQ2ZApX5MWZAcj423PREstcpJdiMeCYpieoqP1SyCI0NIhQ42jOzx9TsZAgIS8brmMNxOuUDvwwek6XLIaKkuIJ3VAZDZD"
+    },
+    "contact_center": {
+        "spark_care": {
+            "orgId"                   : "b1de2d84-c9b1-485b-9698-b35e95c6107f",
+            "clientOrigin"            : "https://cumulus2.produs1.ciscoccservice.com",
+            "eventPollingIntervalMS"  : 3000
+        },
+        "socialminer": {
+            "host"                    : "10.10.10.10",
+            "chatFeedId"              : "100010",
+            "eventPollingIntervalMS"  : 5000
+        }
+    },
+    "totalQuestions" : 2
 }

@@ -7,10 +7,10 @@ var config      = require('./conf/config.json');
 
 // routers
 var index       = require('./routes/index');
-var fbWebhook   = require('./routes/fb-webhook');
+var fbWebhook   = require('./routes/facebook-webhook');
 
-logger.level    = config.debug ? "debug" : "info";
-var port        = process.env.PORT || config.serverPort;
+logger.level    = config.system.debug ? "debug" : "info";
+var port        = process.env.PORT || config.system.serverPort;
 var app         = express();
 
 app.use(bodyParser.json());

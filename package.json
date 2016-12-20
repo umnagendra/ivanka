@@ -8,21 +8,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/umnagendra/rosie.git"
+    "url": "git+https://github.com/umnagendra/ivanka.git"
   },
   "keywords": [
     "bot",
     "chatbot",
     "chat",
-    "fb",
-    "messenger"
+    "facebook",
+    "messenger",
+    "cisco",
+    "spark",
+    "care",
+    "socialminer"
   ],
   "author": "Nagendra U M <umnagendra@gmail.com>",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/umnagendra/rosie/issues"
+    "url": "https://github.com/umnagendra/ivanka/issues"
   },
-  "homepage": "https://github.com/umnagendra/rosie#readme",
+  "homepage": "https://github.com/umnagendra/ivanka#readme",
   "dependencies": {
     "body-parser": "^1.15.1",
     "express": "^4.13.4",

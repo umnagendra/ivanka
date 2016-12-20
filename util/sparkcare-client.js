@@ -10,17 +10,30 @@ var conversation    = require('../util/conversation');
 var SPARK_CARE_API_VERSION        = "v1";
 var SPARK_CARE_CONTROL_API_URL    = "https://chatc.produs1.ciscoccservice.com/chatc/" + SPARK_CARE_API_VERSION;
 
-logger.level = config.debug ? "debug" : "info";
+logger.level = config.system.debug ? "debug" : "info";
 
 var _constructCreateChatPayload = function(thisSession) {
-    var payload = {};
-    payload.customerIdentity = {};
-    payload.customerIdentity.Context_First_Name = thisSession.user.name;
-    payload.customerIdentity.Context_Work_Email = thisSession.user.email;
-    payload.reason = thisSession.user.reason;
-    payload.orgId = config.sparkCareOrgId;
+    var payload = {
+        customerIdentity: {
+            Context_First_Name: thisSession.user.name,
+            Context_Work_Email: thisSession.user.email
+        },
+        reason: thisSession.user.reason,
+        orgId: config.contact_center.spark_care.orgId
+    };
 
     return payload;
+};
+
+var _getSparkCareRequestHeaders = function(thisSession) {
+    var headers = {
+        'Cisco-On-Behalf-Of'    : config.contact_center.spark_care.orgId,
+        'Bubble-Origin'         : config.contact_center.spark_care.clientOrigin,
+        'Accept'                : 'application/json',
+        'Bubble-Authorization'  : thisSession.sparkcare.sessiontoken
+    };
+
+    return headers;
 };
 
 var _getChatEvents = function(session) {
@@ -28,12 +41,7 @@ var _getChatEvents = function(session) {
     var options = {
         uri: session.sparkcare.mediaURL,
         method: 'GET',
-        headers: {
-            'Cisco-On-Behalf-Of' : config.sparkCareOrgId,
-            'Bubble-Origin' : config.sparkCareClientOrigin,
-            'Accept' : 'application/json',
-            'Bubble-Authorization' : session.sparkcare.sessiontoken
-        },
+        headers: _getSparkCareRequestHeaders(session),
         json: true
     };
     return request(options);
@@ -74,7 +82,7 @@ var _processChatEvents = function(thisSession, msgArray) {
 };
 
 var _postChatMessage = function (thisSession, cipherText) {
-    logger.info('Posting a chat message from customer [%s] to Spark Care as part of org [%s] ...', thisSession.user.name, config.sparkCareOrgId);
+    logger.debug('Posting a chat message from customer [%s] to Spark Care as part of org [%s] ...', thisSession.user.name, config.contact_center.spark_care.orgId);
     var data = {
         keyUrl: thisSession.sparkcare.keyURL,
         messages: [cipherText]
@@ -82,12 +90,7 @@ var _postChatMessage = function (thisSession, cipherText) {
     var options = {
         uri: thisSession.sparkcare.mediaURL,
         method: 'POST',
-        headers: {
-            'Cisco-On-Behalf-Of' : config.sparkCareOrgId,
-            'Bubble-Origin' : config.sparkCareClientOrigin,
-            'Accept' : 'application/json',
-            'Bubble-Authorization' : thisSession.sparkcare.sessiontoken
-        },
+        headers: _getSparkCareRequestHeaders(thisSession),
         body: data,
         json: true
     };
@@ -169,13 +172,13 @@ var _decrypt = function(key, cipherText) {
 var sparkCareClient = {};
 
 sparkCareClient.getSessionAuthorization = function() {
-    logger.info('Asking for authorization from Spark Care for orgId [%s] from client origin [%s] ...', config.sparkCareOrgId, config.sparkCareClientOrigin);
+    logger.info('Asking for authorization from Spark Care for orgId [%s] from client origin [%s] ...', config.contact_center.spark_care.orgId, config.contact_center.spark_care.clientOrigin);
     var options = {
         uri: SPARK_CARE_CONTROL_API_URL + "/chat/session",
         method: 'POST',
         headers: {
-            'Cisco-On-Behalf-Of' : config.sparkCareOrgId,
-            'Bubble-Origin' : config.sparkCareClientOrigin,
+            'Cisco-On-Behalf-Of' : config.contact_center.spark_care.orgId,
+            'Bubble-Origin' : config.contact_center.spark_care.clientOrigin,
             'Accept' : 'application/json',
         },
         json: true,
@@ -185,17 +188,12 @@ sparkCareClient.getSessionAuthorization = function() {
 };
 
 sparkCareClient.createChat = function(thisSession) {
-    logger.info('Creating a chat from customer [%s] to Spark Care as part of org [%s] ...', thisSession.user.name, config.sparkCareOrgId);
+    logger.info('Creating a chat from customer [%s] to Spark Care as part of org [%s] ...', thisSession.user.name, config.contact_center.spark_care.orgId);
     var data = _constructCreateChatPayload(thisSession);
     var options = {
         uri: SPARK_CARE_CONTROL_API_URL + '/chat',
         method: 'POST',
-        headers: {
-            'Cisco-On-Behalf-Of' : config.sparkCareOrgId,
-            'Bubble-Origin' : config.sparkCareClientOrigin,
-            'Accept' : 'application/json',
-            'Bubble-Authorization' : thisSession.sparkcare.sessiontoken
-        },
+        headers: _getSparkCareRequestHeaders(thisSession),
         body: data,
         json: true
     };

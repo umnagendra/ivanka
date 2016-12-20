@@ -1,12 +1,23 @@
 var messages        = require('../conf/messages.json');
 var util            = require('util');
 var fbClient        = require('../util/facebook-client');
-var session         = require('../bot/session');
 var sessionManager  = require('../bot/session-manager');
 var config          = require('../conf/config.json');
 var logger          = require('winston');
 
-logger.level = config.debug ? "debug" : "info";
+logger.level = config.system.debug ? "debug" : "info";
+
+var _askQuestion = function(thisSession, question) {
+    conversation.sendTextMessage(thisSession, question, true)
+        .then(function(response) {
+            thisSession.questionsAsked++;
+        })
+        .catch(function(error) {
+            logger.error('Error sending message [%s] to messenger: %s', question, util.inspect(error.error));
+            sessionManager.abortSession(thisSession.user.id);
+        });
+};
+
 var conversation = {};
 
 conversation.sendTextMessage = function(thisSession, messageText, deferred = false) {
@@ -35,23 +46,10 @@ conversation.welcome = function(thisSession) {
 
 conversation.askQuestion = function(thisSession) {
     if (thisSession.questionsAsked === 0) {
-        conversation.sendTextMessage(thisSession, messages.MSG_ASK_EMAIL, true)
-            .then(function(response) {
-                thisSession.questionsAsked++;
-            }).catch(function(error) {
-                logger.error('Error sending message [%s] to messenger: %s', messages.MSG_ASK_EMAIL, util.inspect(error.error));
-                sessionManager.abortSession(thisSession.id);
-            });
+        _askQuestion(thisSession, messages.MSG_ASK_EMAIL);
     } else if (thisSession.questionsAsked === 1) {
         var question = messages.MSG_ASK_REASON_1 + thisSession.user.name + messages.MSG_ASK_REASON_2;
-        conversation.sendTextMessage(thisSession, question, true)
-            .then(function(response) {
-                thisSession.questionsAsked++;
-            })
-            .catch(function(error) {
-                logger.error('Error sending message [%s] to messenger: %s', question, util.inspect(error.error));
-                sessionManager.abortSession(thisSession.user.id);
-            });
+        _askQuestion(thisSession, question);
     }
 };
 
