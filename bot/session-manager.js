@@ -1,17 +1,37 @@
-var config          = require('../conf/config.json');
-var util            = require('util');
-var logger          = require('winston');
-var session         = require('./session');
-var hashmap         = require('hashmap');
-var messages        = require('../conf/messages.json');
-var fbClient        = require('../util/facebook-client');
-var sparkCareClient = require('../util/sparkcare-client');
-var conversation    = require('../util/conversation');
+var config                  = require('../conf/config.json');
+var messages                = require('../conf/messages.json');
+var logger                  = require('winston');
+var hashmap                 = require('hashmap');
+var session                 = require('./session');
+var fbClient                = require('../util/facebook-client');
+var conversation            = require('../util/conversation');
+var sparkCareSessionManager = require('./spark-care-session-manager');
 
 logger.level = config.system.debug ? "debug" : "info";
 
+var _getContactCenterClient = function() {
+    switch(config.system.contact_center) {
+        case "spark_care":
+            return sparkCareSessionManager;
+
+        case "socialminer":
+            // TODO
+            return undefined;
+
+        default:
+            logger.error('Unknown contact center [%s] configured.', config.system.contact_center);
+    }
+};
+
+var _informCustomerAboutAbort = function(id) {
+    fbClient.sendTextMessage(id, messages.MSG_ABORT)
+        .then(function(){});
+}
+
 // Map <sender ID, session>
 var sessionMap = new hashmap();
+
+var contactCenterClient = _getContactCenterClient();
 
 var _createNewSession = function(id) {
     logger.info('Creating new session with ID [%s]', id);
@@ -22,7 +42,7 @@ var _createNewSession = function(id) {
 
 var _abortSession = function(id) {
     logger.info('Aborting session with ID [%s]', id);
-    // TODO inform customer about aborting session due to internal error
+    _informCustomerAboutAbort(id);
     sessionMap.remove(id);
 }
 
@@ -54,18 +74,7 @@ SessionManager.createSession = function(id) {
         }
     );
 
-    // STEP 3: Get session authorization from Spark Care
-    sparkCareClient.getSessionAuthorization()
-        .then(function(response) {
-            logger.debug('Got response. Value of `Set-Bubble-Authorization` is ' + response.headers['set-bubble-authorization']);
-            thisSession.sparkcare.sessiontoken = response.headers['set-bubble-authorization'];
-
-            // STEP 5: Trigger chat or callback
-            // TODO
-        }).catch(function(error) {
-           logger.error('Error getting session authorization from Spark Care:' + error);
-           _abortSession(id);
-        });
+    contactCenterClient.establishSession(thisSession);
 
     return thisSession;
 };
@@ -74,9 +83,9 @@ SessionManager.endSession = function(id) {
     if (!id) {
         throw "{id} param is undefined";
     }
+    contactCenterClient.endChatSession(sessionMap.getSession(id));
     logger.info('Removing existing session with ID [%s]', id);
     sessionMap.remove(id);
-    // TODO handle contact center changes
 };
 
 SessionManager.abortSession = function(id) {
@@ -114,16 +123,7 @@ SessionManager.createChat = function(id) {
             throw "invalid session [ID: " + id + "]";
     }
 
-    sparkCareClient.createChat(thisSession)
-        .then(function(response) {
-            logger.info('Chat created successfully. MediaURL = ' + response.mediaUrl);
-            thisSession.sparkcare.mediaURL = response.mediaUrl;
-            thisSession.sparkcare.poller = setInterval(sparkCareClient.pollForChatEvents, config.contact_center.spark_care.eventPollingIntervalMS, thisSession);
-        })
-        .catch(function(error) {
-            logger.error('Error creating chat:' + error);
-            _abortSession(id);
-        });
+    contactCenterClient.createChat(thisSession);
 };
 
 SessionManager.sendChatMessage = function(id, messageText) {
@@ -136,7 +136,7 @@ SessionManager.sendChatMessage = function(id, messageText) {
             throw "invalid session [ID: " + id + "]";
     }
 
-    sparkCareClient.encryptAndPushToContactCenter(thisSession, messageText);
+    contactCenterClient.sendChatMessage(thisSession, messageText);
 };
 
 module.exports = SessionManager;

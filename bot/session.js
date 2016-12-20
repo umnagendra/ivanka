@@ -31,7 +31,8 @@ Session = function(id) {
         mediaURL            : null,
         keyURL              : null,
         encryptionKey       : null,
-        decryptionKey       : null
+        decryptionKey       : null,
+        poller              : null
     };
 
     this.socialminer = {
