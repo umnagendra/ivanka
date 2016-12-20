@@ -16,12 +16,12 @@ var _handleIncomingMessageInINFOState = function(thisSession, message) {
         thisSession.state = session.STATES.WAITING;
         conversation.sendTextMessage(thisSession, messages.MSG_WAIT);
         // TODO check for agent availability. If no, sleep a bit and do callback
-        if (SessionManager.isLiveSupportAvailable()) {
+        if (!SessionManager.isLiveSupportAvailable()) {
             SessionManager.createChat(thisSession.user.id);
         } else {
+            thisSession.state = session.STATES.CALLBACK;
             conversation.sendTextMessage(thisSession, messages.MSG_NO_AGENTS);
             conversation.sendTextMessage(thisSession, messages.MSG_ASK_PHONE);
-            thisSession.state = session.STATES.CALLBACK;
         }
     }
 };
