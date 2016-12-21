@@ -22,7 +22,7 @@ var _handleIncomingMessageInINFOState = function(thisSession, message) {
             thisSession.state = session.STATES.CALLBACK;
             conversation.sendTextMessage(thisSession, messages.MSG_NO_AGENTS);
             conversation.sendTextMessage(thisSession, messages.MSG_ASK_PHONE);
-        }
+// }
     }
 };
 
