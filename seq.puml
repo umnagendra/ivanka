@@ -1,0 +1,44 @@
+@startuml
+participant FacebookMessenger as fb
+participant Ivanka as i
+participant ContactCenter as cc
+participant Agent as a
+
+fb -> i : Hello/First message
+i -> fb : Greeting
+fb <-> i : Gather information about problem
+i <-> cc : Check Agent Availability
+
+alt agents available
+i -> cc : Start/Inject a new chat
+cc -> a : Assign chat to agent
+a -> cc : Pick the chat
+a -> i : send message
+i -> fb : fwd message to user
+fb -> i : send message/response
+i -> a : fwd message/response to agent 
+
+note over fb,a
+This back and forth conversation repeats for each message 
+sent by either Facebook user or contact center agent
+end note
+
+fb -> i : send Goodbye
+i -> a : fwd goodbye and end chat
+a -> cc : close the chat
+
+else agents not available
+i -> fb : Send agent unavailable message
+i <-> fb : Ask permission to request callback
+
+alt request callback
+i <-> fb : Ask for phone number
+i <-> cc : Inject new callback request
+i -> fb : Confirm acceptance of request
+else no request callback
+i -> fb : Ask to retry later
+end
+
+end
+
+@enduml
