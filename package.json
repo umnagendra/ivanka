@@ -1,7 +1,7 @@
 {
   "name": "ivanka",
   "version": "0.0.1",
-  "description": "A really simple chat bot using the Facebook Messenger platform.",
+  "description": "A intelligent chat bot using the Facebook Messenger platform that integrates with a contact center.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -22,7 +22,11 @@
     "socialminer"
   ],
   "author": "Nagendra U M <umnagendra@gmail.com>",
-  "license": "UNLICENSED",
+  "contributors": [{
+		"name": "S M Mahesh",
+		"email": "maheshsm@gmail.com"
+	}],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/umnagendra/ivanka/issues"
   },
