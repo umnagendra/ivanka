@@ -3,6 +3,8 @@
 
 A intelligent chat bot using the Facebook Messenger platform that integrates with a contact center.
 
+<img src="https://cloud.githubusercontent.com/assets/990210/21576927/122506b8-cf6b-11e6-81cc-d6b93ec6d473.png" width="50%" height="50%">
+
 Ivanka is more than a wrapper/integration point to an existing contact center. She has built-in "smarts" (_read:_ extendable) that enable her to do things like:
 * Ask/Gather information interactively about a problem statement
 * Dip into an existing knowledge base to answer/resolve the problem reported
@@ -17,7 +19,7 @@ Ivanka is more than a wrapper/integration point to an existing contact center. S
 * :blue_heart:
 
 ##Design
-![Screenshot](seq.png)
+<img src="https://cloud.githubusercontent.com/assets/990210/21576925/01f8a4ca-cf6b-11e6-9e30-c2a71afd5070.png" width="70%" height="70%">
 
 ##Running
 ### Infrastructure
