@@ -12,16 +12,16 @@ Ivanka is more than a wrapper/integration point to an existing contact center. S
 * Translate automatically from one language to another
 * etc...
 
-##Built With
+## Built With
 * [Node.js](https://nodejs.org/)
 * [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform)
 * [Cisco Spark Care](https://developer.cisco.com/site/collaboration/)
 * :blue_heart:
 
-##Design
+## Design
 <img src="https://cloud.githubusercontent.com/assets/990210/21576925/01f8a4ca-cf6b-11e6-9e30-c2a71afd5070.png" width="70%" height="70%">
 
-##Running
+## Running
 ### Infrastructure
 This app can be hosted on [Heroku](https://www.heroku.com/) (see [Procfile](Procfile)), although it is entirely possible to host this anywhere as long as:
 * webhooks exposed by this app instance can be invoked from facebook messenger cloud
@@ -39,7 +39,7 @@ Contact a Cisco Contact Center partner, or reach out to [Cisco Spark Dev Support
 
 2. Deploy the app with the customized config. New incoming messages (via facebook messenger) addressed to your registered facebook page will result in the bot flow being triggered. 
 
-##Licenses
+## Licenses
 __MIT License__
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -48,7 +48,7 @@ __External Licenses__
 
 Cisco®, Cisco Spark™, Spark Care™, Cisco SocialMiner® etc. are registered trademarks of [Cisco Systems, Inc.](http://www.cisco.com/web/siteassets/legal/trademark.html)
 
-##About
+## About
 Originally developed in December 2016 A.D.
 
 ###Authors
